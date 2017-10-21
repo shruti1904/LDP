@@ -1,0 +1,413 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Graph</title>
+	<script type="text/javascript" src="{% static 'LDA/vis.js' %}"></script>
+	<link href="{% static 'LDA/vis.css' %}" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style type="text/css">
+		
+		#mynetwork {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			background-color: #ddd;
+		}
+
+		.button{
+		  display: block;
+		  padding: 25px;
+		  color: white;
+		  margin:20px;
+		  cursor:hand;
+		  background-color:#a80;
+		}
+
+		/* The side navigation menu */
+		.sidenav {
+			height: 100%; /* 100% Full-height */
+			width: 0; /* 0 width - change this with JavaScript */
+			position: fixed; /* Stay in place */
+			z-index: 1; /* Stay on top */
+			top: 0;
+			right: 0;
+			background:url("http://localhost/wordpress/wp-content/themes/nile/images/logo_section_bg.png") !important; /* Black*/
+			overflow-x: hidden; /* Disable horizontal scroll */
+			padding-top: 60px; /* Place content 60px from the top */
+			transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+		}
+
+		/* The navigation menu links */
+		.sidenav a {
+			padding: 0px 8px 8px 8px;
+			text-decoration: none;
+			font-size: 25px;
+			color: #d1d1d1;
+			display: block;
+			transition: 0.3s;
+		}
+		.sidenav p {
+			text-decoration: none;
+			font-size: 30px;
+			margin-bottom: 5px; 
+			color: #FFFFFF;
+			display: inline-block;
+			margin-bottom: 10px;  
+			transition: 0.3s;
+		}
+		.sidenav .hint{
+			text-decoration: none;
+			font-size: 20px;
+			margin-bottom: 0px;
+			color: #cccccc;
+			display: inline-block;
+			transition: 0.3s;
+		}
+
+		/* When you mouse over the navigation links, change their color */
+		.sidenav a:hover, .offcanvas a:focus{
+			color: #ffffff;
+		}
+
+		/* Position and style the close button (top right corner) */
+		.sidenav .closebtn {
+			position: absolute;
+			top: 0;
+			right: 25px;
+			font-size: 36px;
+			margin-left: 50px;
+		}
+
+		/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+
+		html{
+			height: 100%;
+		}
+
+		/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+		@media screen and (max-height: 450px) {
+			.sidenav {padding-top: 15px;}
+			.sidenav a {font-size: 18px;}
+		}
+		.myback{
+      		background:url("http://localhost/wordpress/wp-content/themes/nile/images/logo_section_bg.png") !important;
+    	}
+		.header{
+		    color: white;
+		    text-align: center;
+		    cursor: pointer;
+		    font-size: 50px;
+		    padding: 10px;
+    	}
+    	.headin{
+    		display: inline-block;
+    	}
+    	.right{
+    		float: right;
+    	}
+    	.bottom{
+    		background:url("http://localhost/wordpress/wp-content/themes/nile/images/footer_section_bg.png");
+    		color: white;
+    	}
+	</style>
+</head>
+
+  
+<body style="text-align: center; height: 100%" class="myback">
+	<div class="header">
+		<div class="headin" onclick="gotoHome()">Load Distribution Application</div>
+		<div class="headin right" onclick="openNav1()">&#9776;</div>
+	</div>
+
+	<div id="mySidenav" class="sidenav">
+		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		  
+		  <div>
+			.
+			<p class="hint">Name:</p>
+			<p id="name"></p>
+		  </div>
+		  <div>
+			<p class="hint">Latitude:</p>
+			<p id="latitude">18.151612</p>
+		  </div>
+		  <div>
+			<p class="hint">Longitude:</p>
+			<p id="longitude">73.030201</p>
+		  </div>
+		  
+		  	<a href="#" onclick="aboutTransformer()" >About</a>
+		  	
+		  	<a href="#" onclick="shutdownTransformer()" id="shutdownButton">
+			Toggle (On/Off)</a>
+			
+			<a href="#" class="bottom" onclick="Logout()" id="Logout">
+			Logout</a>
+		
+	</div>
+
+	<!-- Use any element to open the sidenav -->
+	<div id="main">
+			<div id="mynetwork"></div>
+	</div>
+	<form method="post" id="Toggle" action="{% url 'LDA:toggle' %}">
+		{% csrf_token %}
+		<input type="hidden" name="t_ID" id="t_ID">
+	</form>
+
+	
+		
+	
+	<script>
+
+		
+		var nodesList = [];
+		{% for t in trans_list %}
+			{% if t.Status == True %}
+				load = {{ t.Load }}
+				kVA = {{ t.kVA }}
+				if (load <= 0.8 * kVA)
+				{
+					nodesList.push({id : {{ t.id }}, label : "{{ t.Name }}", color : '#047a00', font : {color : 'white'}});
+				}
+				else
+				{
+					nodesList.push({id : {{ t.id }}, label : "{{ t.Name }}", color : '#e21d1d', font : {color : 'white'}});
+				}
+			{% else %}
+				nodesList.push({id : {{ t.id }}, label : "{{ t.Name }}", color : '#777', font : {color : 'white'}});
+			{% endif %}
+			console.log("Transformers");
+		{% endfor %}
+
+		function openNav(x) {
+			document.getElementById("name").innerHTML = nodesList[x-1]["label"];
+			document.getElementById("mySidenav").style.width = "300px";
+			document.getElementById("shutdownButton").setAttribute("T_ID",x);
+		}
+
+		/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+		function closeNav() {
+			document.getElementById("mySidenav").style.width = "0";
+		}
+
+		TListLength = nodesList.length
+
+		{% for b in buil_list %}
+			nodesList.push({id : {{ b.id }} + TListLength, label : "{{ b.Name }}", shape: 'dot', size: 10, color : '#29568F'});
+			console.log("Buildings");
+		{% endfor %}
+
+		console.log(nodesList);
+
+		var edgesList = [];
+		{% for c in conn_list %}
+			edgesList.push({from : {{ c.Transformer.id }}, to : {{ c.Building.id }} + TListLength, color : {color : 'black'}});
+		{% endfor %}
+
+		console.log(edgesList);
+
+		var nodes = new vis.DataSet(nodesList);
+		var edges = new vis.DataSet(edgesList);
+
+		var container = document.getElementById('mynetwork');
+		
+		var data = {nodes : nodes, edges : edges};
+
+
+		var options = {   
+		  edges:{ arrows: 
+						{ to:     {enabled: true, scaleFactor:1, type:'arrow'},},
+				  arrowStrikethrough: true,
+				  chosen: true,
+				  color: {
+					color:'#848484',
+					highlight:'#848484',
+					hover: '#848484',
+					inherit: 'from',
+					opacity:1.0
+				  }, dashes: false,
+
+				  font: {
+						  color: '#343434',
+						  size: 14, // px
+						  face: 'arial',
+						  background: 'none',
+						  strokeWidth: 2, // px
+						  strokeColor: '#ffffff',
+						  align: 'horizontal',
+						  multi: false,
+						  vadjust: 0,
+						  bold: {
+								  color: '#343434',
+								  size: 14, // px
+								  face: 'arial',
+								  vadjust: 0,
+								  mod: 'bold'
+						  },
+						  ital: {
+							color: '#343434',
+							size: 14, // px
+							face: 'arial',
+							vadjust: 0,
+							mod: 'italic',
+						  },
+						  boldital: {
+							color: '#343434',
+							size: 14, // px
+							face: 'arial',
+							vadjust: 0,
+							mod: 'bold italic'
+						  },
+						  mono: {
+							color: '#343434',
+							size: 15, // px
+							face: 'courier new',
+							vadjust: 2,
+							mod: ''
+						  }
+						},
+						hidden: false,
+						hoverWidth: 1.5,
+						label: undefined,
+						labelHighlightBold: true,
+						length: 150,
+						physics: true,
+						scaling:{
+						  min: 1,  max: 15,
+						  label: {
+							enabled: true,
+							min: 14, max: 30,
+							maxVisible: 30,
+							drawThreshold: 5
+						  },
+						  customScalingFunction: function (min,max,total,value) {
+							if (max === min) {
+							  return 0.5;
+							}
+							else {
+							  var scale = 1 / (max - min);
+							  return Math.max(0,(value - min)*scale);
+							}
+						  }
+						},
+						selectionWidth: 1,
+						selfReferenceSize:20,
+						shadow:{
+						  enabled: false,
+						  color: 'rgba(255,0,0,0.5)',
+						  size:10,
+						  x:5,
+						  y:5
+						},
+						smooth: {
+						  enabled: true,
+						  type: "dynamic",
+						  roundness: 0.5
+						},
+						title:undefined,
+						value: undefined,
+						width: 1,
+						widthConstraint: false
+		  },
+		  layout : { randomSeed : false }
+
+		};
+		var network = new vis.Network(container, data, options);
+		
+		network.on('click', function (properties) {
+
+				// This to send the user to nearest Feasible transformers if this node is building node
+				// index of this node can be obtained from the "properties" param
+				var index = properties["nodes"];
+				console.log("current node="+index);
+				
+				if(index == "")
+				{
+				  console.log("herr");
+				  closeNav();
+				  return;
+				}
+								
+				// i need the building's index to be sent as an argument
+				// index-(number of transformers) will give me index of building in the table
+		  
+				if(index>TListLength)
+				  location.href = index - transformer.length;
+				else 
+				  openNav(index);
+
+				  //logEvent('click', properties);
+		});
+
+		function shutdownTransformer(){
+
+
+			document.getElementById("t_ID").value 
+			= document.getElementById("shutdownButton").getAttribute("T_ID");
+			if(document.getElementById("t_ID").value<0)
+				return;
+			document.getElementById("Toggle").submit();
+		}
+
+		function openNav1(){
+			document.getElementById("name").innerHTML = "Current User";
+			document.getElementById("mySidenav").style.width = "300px";
+			document.getElementById("shutdownButton").setAttribute("T_ID",-5);
+		}
+
+		function Logout(){
+			window.location.href = "../logout/"
+		}
+		
+
+		function aboutTransformer(){
+
+			
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function(){
+			
+
+				if (this.readyState == 4 && this.status == 200) {
+	            	var data = this.responseText;
+	            	console.log(JSON.parse(data));
+           		}
+           		
+			};
+
+			httpRequest.open('POST', 'http://localhost:8000/LDA/Transformer/', true);
+
+			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			
+			httpRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+		} 
+
+
+
+		function aboutBuilding(id){
+
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function(){
+			
+
+				if (this.readyState == 4 && this.status == 200) {
+	            	var data = this.responseText;
+	            	console.log(JSON.parse(data));
+           		}
+           		
+			};
+
+			httpRequest.open('POST', 'http://localhost:8000/LDA/Building/', true);
+
+			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			
+			httpRequest.send("id="+id));
+		}
+
+
+	</script>
+</body>
+
+</html>
