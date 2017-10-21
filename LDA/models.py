@@ -36,7 +36,7 @@ class Building(models.Model):
 
 class Connection(models.Model):
 	Transformer = models.ForeignKey(Transformer, on_delete = models.CASCADE)
-	Building = models.ForeignKey(Building, on_delete = models.CASCADE) # Change BUILDINGS to Building
+	Building = models.ForeignKey(Building, on_delete = models.CASCADE) 
 	Distance = models.IntegerField(default = 0)
 	Connected = models.BooleanField(default = False)
 

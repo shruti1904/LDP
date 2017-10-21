@@ -12,5 +12,7 @@ urlpatterns = [
 	url(r'^logout/', views.logout, name = 'Logout'),
 	url(r'^Transformer/', views.getTransformer, name = 'Transformer'),
 	url(r'^Building/', views.getBuilding, name = 'Building'),
-	url(r'^loadLog', views.LoadLogRequest, name = 'LoadLog'),
+	url(r'^ConnectedBuildings/', views.getConnectedBuildings, name = 'Connected Buildings'),
+	url(r'^loadLog/', views.LoadLogRequest, name = 'Load Log'),
+	url(r'^getFeasibilityList/', views.getFeasibilityList, name = 'Feasibility List'),	
 ]
