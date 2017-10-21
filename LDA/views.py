@@ -95,19 +95,32 @@ def LoadLogRequest(request):
 @csrf_exempt
 def getConnectedBuildings(request):
     c = Connection.objects.filter(Transformer=request.POST["id"],Connected=True)
-
     NumberList = []
-
     for i in c:
         NumberList.append(i.Building)
-
     Data = []
-
     for i in NumberList:
-        BuildingData = []
-        BuildingData.append(i.Name)
-        BuildingData.append(i.ConnectedLoad)
-        Data.append(BuildingData)
+        dict = []
+        dict.append(i.Name)
+        dict.append(i.ConnectedLoad)
+        Data.append(dict)
+    return JsonResponse(Data,safe=False)
 
-        return JsonResponse(serializers.serialize('json',Data),safe=False)
+@csrf_exempt
+def getFeasibilityList(request):
 
+    CONNECTIONS_LIST = Connection.objects.filter(Building=request.POST['id'])
+    FeasibilityList = []
+    for i, c in enumerate(CONNECTIONS_LIST):
+        feasibility=0
+        if c.Distance == 0:
+            feasibility = 0
+        elif(c.Connected):
+            feasibility = ((0.8 * c.Transformer.kVA) -  c.Transformer.Load - c.Building.ConnectedLoad) / c.Distance
+        else:
+            feasibility = ((0.8 * c.Transformer.kVA) -  c.Transformer.Load) / c.Distance
+        dict=[]
+        dict.append(c.Transformer.Name)
+        dict.append (feasibility)
+        FeasibilityList.append(dict)
+    return JsonResponse(FeasibilityList,safe=False)
