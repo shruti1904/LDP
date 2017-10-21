@@ -51,3 +51,8 @@ class User(models.Model):
 
 	def __str__(self):
 		return str(self.FullName)
+
+class LoadLog(models.Model):
+    Transformer = models.ForeignKey(Transformer, on_delete = models.CASCADE)
+    Load = models.FloatField()
+    Time = models.DateTimeField()

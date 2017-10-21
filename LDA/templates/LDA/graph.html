@@ -3,12 +3,15 @@
 <html>
 <head>
 	<title>Graph</title>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="{% static 'LDA/vis.js' %}"></script>
 	<link href="{% static 'LDA/vis.css' %}" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<style type="text/css">
-		
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><style type="text/css">
+
 		#mynetwork {
 			position: fixed;
 			height: 100%;
@@ -30,7 +33,7 @@
 			height: 100%; /* 100% Full-height */
 			width: 0; /* 0 width - change this with JavaScript */
 			position: fixed; /* Stay in place */
-			z-index: 1; /* Stay on top */
+			z-index: 5; /* Stay on top */
 			top: 0;
 			right: 0;
 			background:url("http://localhost/wordpress/wp-content/themes/nile/images/logo_section_bg.png") !important; /* Black*/
@@ -51,10 +54,10 @@
 		.sidenav p {
 			text-decoration: none;
 			font-size: 30px;
-			margin-bottom: 5px; 
+			margin-bottom: 5px;
 			color: #FFFFFF;
 			display: inline-block;
-			margin-bottom: 10px;  
+			margin-bottom: 10px;
 			transition: 0.3s;
 		}
 		.sidenav .hint{
@@ -114,7 +117,7 @@
 	</style>
 </head>
 
-  
+
 <body style="text-align: center; height: 100%" class="myback">
 	<div class="header">
 		<div class="headin" onclick="gotoHome()">Load Distribution Application</div>
@@ -123,7 +126,7 @@
 
 	<div id="mySidenav" class="sidenav">
 		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-		  
+
 		  <div>
 			.
 			<p class="hint">Name:</p>
@@ -137,15 +140,15 @@
 			<p class="hint">Longitude:</p>
 			<p id="longitude">73.030201</p>
 		  </div>
-		  
+
 		  	<a href="#" onclick="aboutTransformer()" >About</a>
-		  	
+
 		  	<a href="#" onclick="shutdownTransformer()" id="shutdownButton">
 			Toggle (On/Off)</a>
-			
+
 			<a href="#" class="bottom" onclick="Logout()" id="Logout">
 			Logout</a>
-		
+
 	</div>
 
 	<!-- Use any element to open the sidenav -->
@@ -157,12 +160,31 @@
 		<input type="hidden" name="t_ID" id="t_ID">
 	</form>
 
-	
-		
-	
-	<script>
 
-		
+	<div class="modal fade" id="aboutModal" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title" id="aboutTag"></h4>
+				</div>
+				<div class="modal-body">
+					<div id="chart_div"></div>
+					<p id="aboutContent"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>
+
+<script>
+
+
 		var nodesList = [];
 		{% for t in trans_list %}
 			{% if t.Status == True %}
@@ -213,12 +235,12 @@
 		var edges = new vis.DataSet(edgesList);
 
 		var container = document.getElementById('mynetwork');
-		
+
 		var data = {nodes : nodes, edges : edges};
 
 
-		var options = {   
-		  edges:{ arrows: 
+		var options = {
+		  edges:{ arrows:
 						{ to:     {enabled: true, scaleFactor:1, type:'arrow'},},
 				  arrowStrikethrough: true,
 				  chosen: true,
@@ -312,31 +334,33 @@
 						width: 1,
 						widthConstraint: false
 		  },
-		  layout : { randomSeed : false }
+		  layout : { randomSeed : undefined }
 
 		};
 		var network = new vis.Network(container, data, options);
-		
+
 		network.on('click', function (properties) {
 
 				// This to send the user to nearest Feasible transformers if this node is building node
 				// index of this node can be obtained from the "properties" param
 				var index = properties["nodes"];
 				console.log("current node="+index);
-				
+
 				if(index == "")
 				{
 				  console.log("herr");
 				  closeNav();
 				  return;
 				}
-								
+
 				// i need the building's index to be sent as an argument
 				// index-(number of transformers) will give me index of building in the table
-		  
-				if(index>TListLength)
-				  location.href = index - transformer.length;
-				else 
+
+				if(index>TListLength){
+					console.log("something is not wrong");
+					aboutBuilding(index - TListLength);
+				}
+				else
 				  openNav(index);
 
 				  //logEvent('click', properties);
@@ -345,7 +369,7 @@
 		function shutdownTransformer(){
 
 
-			document.getElementById("t_ID").value 
+			document.getElementById("t_ID").value
 			= document.getElementById("shutdownButton").getAttribute("T_ID");
 			if(document.getElementById("t_ID").value<0)
 				return;
@@ -361,28 +385,55 @@
 		function Logout(){
 			window.location.href = "../logout/"
 		}
-		
+
 
 		function aboutTransformer(){
-
-			
-			var httpRequest = new XMLHttpRequest();
-			httpRequest.onreadystatechange = function(){
-			
-
+			var aboutTransformerRequest = new XMLHttpRequest();
+			var TransformerData, HtmlContent;
+			aboutTransformerRequest.onreadystatechange = function(){
 				if (this.readyState == 4 && this.status == 200) {
-	            	var data = this.responseText;
-	            	console.log(JSON.parse(data));
+
+	            	TransformerData = this.responseText;
+	            	TransformerData = JSON.parse(JSON.parse(TransformerData));
+								HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
+
+								for(i in TransformerData[0].fields){
+									HtmlContent+="<tr><td>"+i+"</td><td>"+TransformerData[0].fields[i]+"</td></tr>";
+								}
+
+								HtmlContent+="</table>"
+								$('#aboutTag').html("Transformer:	"+TransformerData[0].fields.Name);
+								$('#aboutContent').html(HtmlContent);
+								$("#aboutModal").modal("toggle");
            		}
-           		
 			};
+			aboutTransformerRequest.open('POST', 'http://localhost:8000/LDA/Transformer/', true);
+			aboutTransformerRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			aboutTransformerRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
 
-			httpRequest.open('POST', 'http://localhost:8000/LDA/Transformer/', true);
+			var LoadLogData;
+			var TransformerLoadLogRequest = new XMLHttpRequest();
+			TransformerLoadLogRequest.onreadystatechange = function(){
+					if (this.readyState == 4 && this.status == 200) {
+							LoadLogData = this.responseText;
+							LoadLogData = JSON.parse(LoadLogData);
 
-			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			
-			httpRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
-		} 
+							var timeLoadRow=[[]];
+							for (var i=0;i<LoadLogData.length;i++){
+								var x=[];
+								x.push(new Date(LoadLogData[i].time));
+								x.push(LoadLogData[i].load);
+								timeLoadRow.push(x);
+							}
+							console.log(timeLoadRow);
+							drawGraphLoadLog(timeLoadRow)
+					}
+			}
+			TransformerLoadLogRequest.open('POST', 'http://localhost:8000/LDA/loadLog/', true);
+			TransformerLoadLogRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			TransformerLoadLogRequest.send("ID="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+
+		}
 
 
 
@@ -390,24 +441,53 @@
 
 			var httpRequest = new XMLHttpRequest();
 			httpRequest.onreadystatechange = function(){
-			
-
 				if (this.readyState == 4 && this.status == 200) {
 	            	var data = this.responseText;
 	            	console.log(JSON.parse(data));
            		}
-           		
 			};
-
 			httpRequest.open('POST', 'http://localhost:8000/LDA/Building/', true);
-
 			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			
-			httpRequest.send("id="+id));
+			httpRequest.send("id="+id);
 		}
 
+		function drawGraphLoadLog(LoadLogData) {
+			var data;
+     	var chart;
+			// Load the Visualization API and the piechart package.
+      google.charts.load('current', {'packages':['corechart']});
+			// Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(function(){drawChart(LoadLogData)});
+		}
+
+		// Callback that creates and populates a data table,
+		// instantiates the pie chart, passes in the data and
+		// draws it.
+      function drawChart(LoadLogData) {
+  			// Create our data table.
+        data = new google.visualization.DataTable();
+        data.addColumn('date', 'Date');
+        data.addColumn('number', 'Load');
+
+				for(var i = 1;i< LoadLogData.length;i++)
+        	data.addRow(LoadLogData[i]);
+
+        // Set chart options
+        var options = {'title':'Change in Load of this transformer',
+                       'width':300,
+                       'height':300};
+
+        // Instantiate and draw our chart, passing in some options.
+        chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        google.visualization.events.addListener(chart, 'select', selectHandler);
+        chart.draw(data, options);
+      }
+
+      function selectHandler() {
+        var selectedItem = chart.getSelection()[0];
+        var value = data.getValue(selectedItem.row, 0);
+        alert('The user selected ' + value);
+      }
 
 	</script>
-</body>
-
 </html>
