@@ -90,3 +90,24 @@ def LoadLogRequest(request):
         dict['load'] = l.Load
         jsonLog.append(dict)
     return JsonResponse(jsonLog,safe=False)
+
+
+@csrf_exempt
+def getConnectedBuildings(request):
+    c = Connection.objects.filter(Transformer=request.POST["id"],Connected=True)
+
+    NumberList = []
+
+    for i in c:
+        NumberList.append(i.Building)
+
+    Data = []
+
+    for i in NumberList:
+        BuildingData = []
+        BuildingData.append(i.Name)
+        BuildingData.append(i.ConnectedLoad)
+        Data.append(BuildingData)
+
+        return JsonResponse(serializers.serialize('json',Data),safe=False)
+

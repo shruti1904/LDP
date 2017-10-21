@@ -146,6 +146,8 @@
 		  	<a href="#" onclick="shutdownTransformer()" id="shutdownButton">
 			Toggle (On/Off)</a>
 
+			<a href="#" onclick="getConnectedBuildings()">Connected Buildings</a>
+
 			<a href="#" class="bottom" onclick="Logout()" id="Logout">
 			Logout</a>
 
@@ -446,10 +448,26 @@
 	            	console.log(JSON.parse(data));
            		}
 			};
-			httpRequest.open('POST', 'http://localhost:8000/LDA/Building/', true);
+			httpRequest.open('POST', 'http://localhost:8000/LDA/ConnectedBuildings/', true);
 			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			httpRequest.send("id="+id);
 		}
+
+		function getConnectedBuildings(id){
+
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function(){
+				if (this.readyState == 4 && this.status == 200) {
+	            	var data = this.responseText;
+	            	console.log(JSON.parse(data));
+           		}
+			};
+			httpRequest.open('POST', 'http://localhost:8000/LDA/ConnectedBuildings/', true);
+			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			httpRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+		}
+
+
 
 		function drawGraphLoadLog(LoadLogData) {
 			var data;

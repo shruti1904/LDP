@@ -12,5 +12,6 @@ urlpatterns = [
 	url(r'^logout/', views.logout, name = 'Logout'),
 	url(r'^Transformer/', views.getTransformer, name = 'Transformer'),
 	url(r'^Building/', views.getBuilding, name = 'Building'),
+	url(r'^ConnectedBuildings/', views.getConnectedBuildings, name = 'ConnectedBuildings'),
 	url(r'^loadLog', views.LoadLogRequest, name = 'LoadLog'),
 ]
