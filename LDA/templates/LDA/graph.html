@@ -10,7 +10,8 @@
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><style type="text/css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style type="text/css">
 
 		#mynetwork {
 			position: fixed;
@@ -95,26 +96,36 @@
 			.sidenav a {font-size: 18px;}
 		}
 		.myback{
-      		background:url("http://localhost/wordpress/wp-content/themes/nile/images/logo_section_bg.png") !important;
-    	}
+			background:url("http://localhost/wordpress/wp-content/themes/nile/images/logo_section_bg.png") !important;
+		}
 		.header{
-		    color: white;
-		    text-align: center;
-		    cursor: pointer;
-		    font-size: 50px;
-		    padding: 10px;
+			color: white;
+			text-align: center;
+			cursor: pointer;
+			font-size: 50px;
+			padding: 10px;
+		}
+		.headin{
+			display: inline-block;
+		}
+		.right{
+			float: right;
+		}
+		.bottom{
+			background:url("http://localhost/wordpress/wp-content/themes/nile/images/footer_section_bg.png");
+			color: white;
+		}
+
+		#AddConnButton
+    	{
+    		width: 4em;
+    		height: 4em;
+    		position: fixed;
+    		z-index: 1;
+    		bottom: 3em;
+    		right: 3em;
     	}
-    	.headin{
-    		display: inline-block;
-    	}
-    	.right{
-    		float: right;
-    	}
-    	.bottom{
-    		background:url("http://localhost/wordpress/wp-content/themes/nile/images/footer_section_bg.png");
-    		color: white;
-    	}
-	</style>
+  </style>
 </head>
 
 
@@ -141,11 +152,11 @@
 			<p id="longitude">73.030201</p>
 		  </div>
 
-		  	<a href="#" onclick="aboutTransformer()" >About</a>
+			<a href="#" onclick="aboutTransformer()" >About</a>
 				<a href="#" onclick="getConnectedBuildings()">Building wise Load Share</a>
 				<a href="#" onclick="getLoadLogData()">Load Log</a>
 
-		  	<a href="#" onclick="shutdownTransformer()" id="shutdownButton">
+			<a href="#" onclick="shutdownTransformer()" id="shutdownButton">
 			Toggle (On/Off)</a>
 
 
@@ -183,6 +194,10 @@
 
 		</div>
 	</div>
+
+	<a href="{% url 'LDA:Add Connections' %}">
+		<img id="AddConnButton" src="{% static 'LDA/+.png' %}">
+	</a>
 </body>
 
 <script>
@@ -243,102 +258,105 @@
 
 
 		var options = {
-		  edges:{ arrows:
-						{ to:     {enabled: true, scaleFactor:1, type:'arrow'},},
-				  arrowStrikethrough: true,
-				  chosen: true,
-				  color: {
+			edges:{
+			  	arrows: {
+			  		to: {
+			  			enabled: true, scaleFactor:1, type:'arrow'
+			  		},
+			  	},
+				arrowStrikethrough: true,
+				chosen: true,
+				color: {
 					color:'#848484',
 					highlight:'#848484',
 					hover: '#848484',
 					inherit: 'from',
 					opacity:1.0
-				  }, dashes: false,
-
-				  font: {
-						  color: '#343434',
-						  size: 14, // px
-						  face: 'arial',
-						  background: 'none',
-						  strokeWidth: 2, // px
-						  strokeColor: '#ffffff',
-						  align: 'horizontal',
-						  multi: false,
-						  vadjust: 0,
-						  bold: {
-								  color: '#343434',
-								  size: 14, // px
-								  face: 'arial',
-								  vadjust: 0,
-								  mod: 'bold'
-						  },
-						  ital: {
-							color: '#343434',
-							size: 14, // px
-							face: 'arial',
-							vadjust: 0,
-							mod: 'italic',
-						  },
-						  boldital: {
-							color: '#343434',
-							size: 14, // px
-							face: 'arial',
-							vadjust: 0,
-							mod: 'bold italic'
-						  },
-						  mono: {
-							color: '#343434',
-							size: 15, // px
-							face: 'courier new',
-							vadjust: 2,
-							mod: ''
-						  }
-						},
-						hidden: false,
-						hoverWidth: 1.5,
-						label: undefined,
-						labelHighlightBold: true,
-						length: 150,
-						physics: true,
-						scaling:{
-						  min: 1,  max: 15,
-						  label: {
-							enabled: true,
-							min: 14, max: 30,
-							maxVisible: 30,
-							drawThreshold: 5
-						  },
-						  customScalingFunction: function (min,max,total,value) {
-							if (max === min) {
-							  return 0.5;
-							}
-							else {
-							  var scale = 1 / (max - min);
-							  return Math.max(0,(value - min)*scale);
-							}
-						  }
-						},
-						selectionWidth: 1,
-						selfReferenceSize:20,
-						shadow:{
-						  enabled: false,
-						  color: 'rgba(255,0,0,0.5)',
-						  size:10,
-						  x:5,
-						  y:5
-						},
-						smooth: {
-						  enabled: true,
-						  type: "dynamic",
-						  roundness: 0.5
-						},
-						title:undefined,
-						value: undefined,
-						width: 1,
-						widthConstraint: false
-		  },
-		  layout : { randomSeed : undefined }
-
+				},
+				dashes: false,
+				font: {
+					color: '#343434',
+					size: 14, // px
+					face: 'arial',
+					background: 'none',
+					strokeWidth: 2, // px
+					strokeColor: '#ffffff',
+					align: 'horizontal',
+					multi: false,
+					vadjust: 0,
+					bold: {
+						color: '#343434',
+						size: 14, // px
+						face: 'arial',
+						vadjust: 0,
+						mod: 'bold'
+					},
+					ital: {
+						color: '#343434',
+						size: 14, // px
+						face: 'arial',
+						vadjust: 0,
+						mod: 'italic',
+					},
+					boldital: {
+						color: '#343434',
+						size: 14, // px
+						face: 'arial',
+						vadjust: 0,
+						mod: 'bold italic'
+					},
+					mono: {
+						color: '#343434',
+						size: 15, // px
+						face: 'courier new',
+						vadjust: 2,
+						mod: ''
+					}
+				},
+				hidden: false,
+				hoverWidth: 1.5,
+				label: undefined,
+				labelHighlightBold: true,
+				length: 150,
+				physics: true,
+				scaling:{
+					min: 1,  max: 15,
+					label: {
+						enabled: true,
+						min: 14, max: 30,
+						maxVisible: 30,
+						drawThreshold: 5
+					},
+					customScalingFunction: function (min,max,total,value) {
+						if (max === min) {
+							return 0.5;
+						}
+						else {
+							var scale = 1 / (max - min);
+							return Math.max(0,(value - min)*scale);
+						}
+					}
+				},
+				selectionWidth: 1,
+				selfReferenceSize:20,
+				shadow:{
+					enabled: false,
+					color: 'rgba(255,0,0,0.5)',
+					size:10,
+					x:5,
+					y:5
+				},
+				smooth: {
+					enabled: true,
+					type: "dynamic",
+					roundness: 0.5
+				},
+				title:undefined,
+				value: undefined,
+				width: 1,
+				widthConstraint: false
+			},
+			layout : { randomSeed : 4 }
 		};
 		var network = new vis.Network(container, data, options);
 
@@ -365,12 +383,10 @@
 				else
 				  openNav(index);
 
-				  //logEvent('click', properties);
+				//logEvent('click', properties);
 		});
 
 		function shutdownTransformer(){
-
-
 			document.getElementById("t_ID").value
 			= document.getElementById("shutdownButton").getAttribute("T_ID");
 			if(document.getElementById("t_ID").value<0)
@@ -400,20 +416,20 @@
 			aboutTransformerRequest.onreadystatechange = function(){
 				if (this.readyState == 4 && this.status == 200) {
 
-	            	TransformerData = this.responseText;
-	            	TransformerData = JSON.parse(JSON.parse(TransformerData));
-								HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
+					TransformerData = this.responseText;
+					TransformerData = JSON.parse(JSON.parse(TransformerData));
+					HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
 
-								for(i in TransformerData[0].fields){
-									HtmlContent+="<tr><td>"+i+"</td><td>"+TransformerData[0].fields[i]+"</td></tr>";
-								}
+					for(i in TransformerData[0].fields){
+						HtmlContent+="<tr><td>"+i+"</td><td>"+TransformerData[0].fields[i]+"</td></tr>";
+					}
 
-								HtmlContent+="</table>"
-								$('#aboutTag').html("Transformer:	"+TransformerData[0].fields.Name);
-								$('#aboutContent').html(HtmlContent);
-								$('#chart_div').html("");
-								$("#aboutModal").modal("toggle");
-           		}
+					HtmlContent+="</table>"
+					$('#aboutTag').html("Transformer:	"+TransformerData[0].fields.Name);
+					$('#aboutContent').html(HtmlContent);
+					$('#chart_div').html("");
+					$("#aboutModal").modal("toggle");
+				}
 			};
 			aboutTransformerRequest.open('POST', 'http://localhost:8000/LDA/Transformer/', true);
 			aboutTransformerRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -421,72 +437,66 @@
 		}
 
 		function getLoadLogData(){
-					var LoadLogData;
-					var TransformerLoadLogRequest = new XMLHttpRequest();
-					TransformerLoadLogRequest.onreadystatechange = function(){
-							if (this.readyState == 4 && this.status == 200) {
-									LoadLogData = this.responseText;
-									LoadLogData = JSON.parse(LoadLogData);
+			var LoadLogData;
+			var TransformerLoadLogRequest = new XMLHttpRequest();
+			TransformerLoadLogRequest.onreadystatechange = function(){
+				if (this.readyState == 4 && this.status == 200) {
+					LoadLogData = this.responseText;
+					LoadLogData = JSON.parse(LoadLogData);
 
-									var timeLoadRow=[[]];
-									for (var i=0;i<LoadLogData.length;i++){
-										var x=[];
-										x.push(new Date(LoadLogData[i].time));
-										x.push(LoadLogData[i].load);
-										timeLoadRow.push(x);
-									}
-									console.log(timeLoadRow);
-									drawGraph(timeLoadRow,'chart_div',0);//0 because its a LineChart
-									$('#aboutTag').html("Transformer: "+nodesList[id]);
-
-									$('#aboutContent').html("");
-									$('#aboutModal').modal('toggle');
-
-							}
+					var timeLoadRow=[[]];
+					for (var i=0;i<LoadLogData.length;i++){
+						var x=[];
+						x.push(new Date(LoadLogData[i].time));
+						x.push(LoadLogData[i].load);
+						timeLoadRow.push(x);
 					}
-					TransformerLoadLogRequest.open('POST', 'http://localhost:8000/LDA/loadLog/', true);
-					TransformerLoadLogRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-					TransformerLoadLogRequest.send("ID="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+					console.log(timeLoadRow);
+					drawGraph(timeLoadRow,'chart_div',0);//0 because its a LineChart
+					$('#aboutTag').html("Transformer: "+nodesList[id]);
+					$('#aboutContent').html("");
+					$('#aboutModal').modal('toggle');
 				}
+			}
+			TransformerLoadLogRequest.open('POST', 'http://localhost:8000/LDA/loadLog/', true);
+			TransformerLoadLogRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			TransformerLoadLogRequest.send("ID="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+		}
 
 		function getConnectedBuildings(id){
-
-					var httpRequest = new XMLHttpRequest();
-					httpRequest.onreadystatechange = function(){
-						if (this.readyState == 4 && this.status == 200) {
-			            	var data = this.responseText;
-										data =JSON.parse(data);
-										console.log(data);
-										drawGraph(data,'chart_div',1);//1 because its a LineChart
-										$('#aboutTag').html("Transformer: "+nodesList[id]);
-										$("#aboutModal").modal("toggle");
-
-		        }
-					};
-					httpRequest.open('POST', 'http://localhost:8000/LDA/ConnectedBuildings/', true);
-					httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-					httpRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function(){
+				if (this.readyState == 4 && this.status == 200) {
+					var data = this.responseText;
+					data =JSON.parse(data);
+					console.log(data);
+					drawGraph(data,'chart_div',1);//1 because its a LineChart
+					$('#aboutTag').html("Transformer: "+nodesList[id]);
+					$("#aboutModal").modal("toggle");
 				}
-
-
+			};
+			httpRequest.open('POST', 'http://localhost:8000/LDA/ConnectedBuildings/', true);
+			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			httpRequest.send("id="+ document.getElementById("shutdownButton").getAttribute("T_ID"));
+		}
 				//functions for Building data retrieval
 		function aboutBuilding(id){
 			var httpRequest = new XMLHttpRequest();
 			httpRequest.onreadystatechange = function(){
 				if (this.readyState == 4 && this.status == 200) {
-	            	var data = this.responseText;
-	            	data = JSON.parse(JSON.parse(data));
-								HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
+					var data = this.responseText;
+					data = JSON.parse(JSON.parse(data));
+					HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
 
-								for(i in data[0].fields){
-									HtmlContent+="<tr><td>"+i+"</td><td>"+data[0].fields[i]+"</td></tr>";
-								}
+					for(i in data[0].fields){
+						HtmlContent+="<tr><td>"+i+"</td><td>"+data[0].fields[i]+"</td></tr>";
+					}
 
-								HtmlContent+="</table>"
-								$('#aboutTag').html("Building:"+nodesList[id+TListLength]);
-								$('#aboutContent').html(HtmlContent);
-								$("#aboutModal").modal("toggle");
-           		}
+					HtmlContent+="</table>"
+					$('#aboutTag').html("Building:"+nodesList[id+TListLength]);
+					$('#aboutContent').html(HtmlContent);
+					$("#aboutModal").modal("toggle");
+				}
 			};
 			httpRequest.open('POST', 'http://localhost:8000/LDA/Building/', true);
 			httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -495,10 +505,10 @@
 			var feasibilityRequest = new XMLHttpRequest();
 			feasibilityRequest.onreadystatechange = function(){
 				if (this.readyState == 4 && this.status == 200) {
-	            	var data = this.responseText;
-	            	data = JSON.parse(data);
-								drawBarGraph(data);
-           		}
+					var data = this.responseText;
+					data = JSON.parse(data);
+					drawBarGraph(data);
+				}
 			};
 			feasibilityRequest.open('POST', 'http://localhost:8000/LDA/getFeasibilityList/', true);
 			feasibilityRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -511,43 +521,41 @@
 		function drawBarGraph(feasibilitydata){
 			google.charts.load('current', {'packages':['corechart']});
 			google.charts.setOnLoadCallback(function(){
-				var data;
-	     	var chart;
-  			// Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'name');
-        data.addColumn('number', 'feasibility');
-				for(var i = 0;i< feasibilitydata.length;i++)
-        	data.addRow(feasibilitydata[i]);
-				console.log(data);
+			var data;
+			var chart;
+			// Create our data table.
+			data = new google.visualization.DataTable();
+			data.addColumn('string', 'name');
+			data.addColumn('number', 'feasibility');
+			for(var i = 0;i< feasibilitydata.length;i++)
+				data.addRow(feasibilitydata[i]);
+			console.log(data);
 
-        // Set chart options
-        var options = {'title':' Feasibility Report',
-                       'width':800,
-                       'height':800,
-											 hAxis: {
-          		 						title: 'Feasibility Measure',
-        								},
+			// Set chart options
+			var options = {'title':' Feasibility Report',
+						   'width':800,
+						   'height':800,
+							hAxis: {
+							title: 'Feasibility Measure',
+							},
+						};
 
-										 };
-
-        // Instantiate and draw our chart, passing in some options.
-				// change Bar to Column for vertical graph
-        chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-        google.visualization.events.addListener(chart, 'select', selectHandler);
-        chart.draw(data, options);
+			// Instantiate and draw our chart, passing in some options.
+					// change Bar to Column for vertical graph
+			chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+			google.visualization.events.addListener(chart, 'select', selectHandler);
+			chart.draw(data, options);
 			});
-
 		}
 
 // piechart and line chart for transFormer
 
 		function drawGraph(LoadLogData,id,type) {
 			// Load the Visualization API and the piechart package.
-      google.charts.load('current', {'packages':['corechart']});
+			google.charts.load('current', {'packages':['corechart']});
 			// Set a callback to run when the Google Visualization API is loaded.
 			if(type == 0)
-      	google.charts.setOnLoadCallback(function(){drawLineChart(LoadLogData,id)});
+				google.charts.setOnLoadCallback(function(){drawLineChart(LoadLogData,id)});
 			else
 				google.charts.setOnLoadCallback(function(){drawPieChart(LoadLogData,id)});
 		}
@@ -555,54 +563,52 @@
 		// Callback that creates and populates a data table,
 		// instantiates the Line chart, passes in the data and
 		// draws it.
-      function drawLineChart(LoadLogData,id) {
-				var data;
-	     	var chart;
-  			// Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('date', 'Date');
-        data.addColumn('number', 'Load');
+		function drawLineChart(LoadLogData,id) {
+			var data;
+			var chart;
+			// Create our data table.
+			data = new google.visualization.DataTable();
+			data.addColumn('date', 'Date');
+			data.addColumn('number', 'Load');
+			for(var i = 1;i< LoadLogData.length;i++)
+				data.addRow(LoadLogData[i]);
 
-				for(var i = 1;i< LoadLogData.length;i++)
-        	data.addRow(LoadLogData[i]);
+			// Set chart options
+			var options = {'title':'Building\'s Load Share',
+						   'width':600,
+						   'height':600};
 
-        // Set chart options
-        var options = {'title':'Building\'s Load Share',
-                       'width':600,
-                       'height':600};
+			// Instantiate and draw our chart, passing in some options.
+			chart = new google.visualization.LineChart(document.getElementById(id));
+			google.visualization.events.addListener(chart, 'select', selectHandler);
+			chart.draw(data, options);
+		}
+		function drawPieChart(LoadLogData,id) {
+			var data;
+			var chart;
+			// Create our data table.
+			data = new google.visualization.DataTable();
+			data.addColumn('string', 'Name');
+			data.addColumn('number', 'Load');
+			for(var i = 0;i< LoadLogData.length;i++)
+				data.addRow(LoadLogData[i]);
 
-        // Instantiate and draw our chart, passing in some options.
-        chart = new google.visualization.LineChart(document.getElementById(id));
-        google.visualization.events.addListener(chart, 'select', selectHandler);
-        chart.draw(data, options);
-      }
-			function drawPieChart(LoadLogData,id) {
-				var data;
-	     	var chart;
-  			// Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'Name');
-        data.addColumn('number', 'Load');
+			// Set chart options
+			var options = {'title':'Change in Load of this transformer',
+						   'width':500,
+						   'height':500};
 
-				for(var i = 0;i< LoadLogData.length;i++)
-        	data.addRow(LoadLogData[i]);
+			// Instantiate and draw our chart, passing in some options.
+			chart = new google.visualization.PieChart(document.getElementById(id));
+			google.visualization.events.addListener(chart, 'select', selectHandler);
+			chart.draw(data, options);
+		}
 
-        // Set chart options
-        var options = {'title':'Change in Load of this transformer',
-                       'width':500,
-                       'height':500};
+		function selectHandler() {
+			var selectedItem = chart.getSelection()[0];
+			var value = data.getValue(selectedItem.row, 0);
+			alert('The user selected ' + value);
+		}
 
-        // Instantiate and draw our chart, passing in some options.
-        chart = new google.visualization.PieChart(document.getElementById(id));
-        google.visualization.events.addListener(chart, 'select', selectHandler);
-        chart.draw(data, options);
-      }
-
-      function selectHandler() {
-        var selectedItem = chart.getSelection()[0];
-        var value = data.getValue(selectedItem.row, 0);
-        alert('The user selected ' + value);
-      }
-
-	</script>
+</script>
 </html>

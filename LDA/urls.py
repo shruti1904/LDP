@@ -14,5 +14,6 @@ urlpatterns = [
 	url(r'^Building/', views.getBuilding, name = 'Building'),
 	url(r'^ConnectedBuildings/', views.getConnectedBuildings, name = 'Connected Buildings'),
 	url(r'^loadLog/', views.LoadLogRequest, name = 'Load Log'),
-	url(r'^getFeasibilityList/', views.getFeasibilityList, name = 'Feasibility List'),	
+	url(r'^getFeasibilityList/', views.getFeasibilityList, name = 'Feasibility List'),
+	url(r'^addConn/', views.add_connections, name = 'Add Connections'),
 ]
