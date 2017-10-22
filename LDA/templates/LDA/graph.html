@@ -453,7 +453,7 @@
 					}
 					console.log(timeLoadRow);
 					drawGraph(timeLoadRow,'chart_div',0);//0 because its a LineChart
-					$('#aboutTag').html("Transformer: "+nodesList[id]);
+					$('#aboutTag').html("Transformer: "+nodesList[document.getElementById("shutdownButton").getAttribute("T_ID")]);
 					$('#aboutContent').html("");
 					$('#aboutModal').modal('toggle');
 				}
