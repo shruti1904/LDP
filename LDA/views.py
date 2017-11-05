@@ -9,6 +9,7 @@ import json
 from django.http import JsonResponse
 from django.core import serializers
 from . import utilities
+
 # Create your views here.
 def index(request):
     return render(request, 'LDA/index.html', {})
@@ -17,16 +18,22 @@ def graph(request):
     if('user' not in request.session):
         return redirect("http://localhost/wordpress/")
 
-    transformers_list = Transformer.objects.all()
-    buildings_list = Building.objects.all()
-    connection_list = Connection.objects.filter(Connected = True)
+    return render(request, 'LDA/graph.html',{})
 
-    context = {
-        'trans_list' : transformers_list,
-        'buil_list' : buildings_list,
-        'conn_list' : connection_list,
-    }
-    return render(request, 'LDA/graph.html', context)
+def graphv2(request):
+    if('user' not in request.session):
+        return redirect("http://localhost/wordpress/")
+
+    transformers_list = [ T.dict() for T in Transformer.objects.all() ]
+    buildings_list = [ B.dict() for B in Building.objects.all() ]
+    connection_list = [ C.dict() for C in Connection.objects.filter(Connected = True) ]
+    graphDict = {}
+    graphDict["Transformer"] = transformers_list
+
+    graphDict["Building"] = buildings_list
+    graphDict["Connection"] = connection_list
+    return JsonResponse(graphDict,safe=False)
+
 
 def add_connections(request):
     utilities.add_connections()
@@ -34,8 +41,10 @@ def add_connections(request):
 
 def toggle(request):
     tID = request.POST["t_ID"]
-    utilities.toggle(tID)
-    return HttpResponseRedirect(reverse('LDA:graph'))
+    print(tID)
+    changedBuildings = utilities.toggle(tID)
+    print(changedBuildings)
+    return JsonResponse(changedBuildings,safe = False)
 
 
 @csrf_exempt
@@ -62,23 +71,19 @@ def login(request):
     else:
         return HttpResponse("Wrong email or password")
 
-@csrf_exempt
 def logout(request):
     del request.session['user']
     return redirect("http://localhost/wordpress/")
 
-@csrf_exempt
 def getTransformer(request):
     t = Transformer.objects.filter(id=request.POST["id"])
     return JsonResponse(serializers.serialize('json',t),safe=False)
 
-@csrf_exempt
 def getBuilding(request):
     b = Building.objects.filter(id=request.POST["id"])
     return JsonResponse(serializers.serialize('json',b),safe=False)
 
 
-@csrf_exempt
 def LoadLogRequest(request):
     tID = request.POST["ID"]
     logs = LoadLog.objects.filter(Transformer = tID)
@@ -92,7 +97,6 @@ def LoadLogRequest(request):
     return JsonResponse(jsonLog,safe=False)
 
 
-@csrf_exempt
 def getConnectedBuildings(request):
     c = Connection.objects.filter(Transformer=request.POST["id"],Connected=True)
     NumberList = []
@@ -106,7 +110,6 @@ def getConnectedBuildings(request):
         Data.append(dict)
     return JsonResponse(Data,safe=False)
 
-@csrf_exempt
 def getFeasibilityList(request):
 
     CONNECTIONS_LIST = Connection.objects.filter(Building=request.POST['id'])

@@ -6,6 +6,7 @@ from .gmapsDistMatrix.distance_matrix import distance_matrix
 
 def toggle(tID):
     oldT = get_object_or_404(Transformer, id = tID)
+    ChangedBuildings = []
     if oldT.Status == True:
         # Shut the transformer down, set its load to 0 and save it to the database
         oldT.Status = False
@@ -28,6 +29,7 @@ def toggle(tID):
                 Connection.objects.filter(Transformer = switchTo, Building = b).update(Connected = True)
                 switchTo.Load += b.ConnectedLoad
                 switchTo.save()
+                ChangedBuildings.append(b.id)
                 LoadLog(Transformer = switchTo, Load = switchTo.Load, Time = timezone.now()).save()
     else:
         oldT.Status = True
@@ -40,9 +42,12 @@ def toggle(tID):
                 c.Transformer.save()
                 LoadLog(Transformer = c.Transformer, Load = c.Transformer.Load, Time = timezone.now()).save()
                 c.save()
+            ChangedBuildings.append(b.id)
             Connection.objects.filter(Transformer = oldT, Building = b).update(Connected = True)
         oldT.save()
         LoadLog(Transformer = oldT, Load = oldT.Load, Time = timezone.now()).save()
+
+    return ChangedBuildings
 
 def add_connections():
     gmaps = googlemaps.Client(key='AIzaSyD-IxdRdp56dYFVy-06EMG9VD1RCSwUWdk')

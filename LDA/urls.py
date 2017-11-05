@@ -16,4 +16,5 @@ urlpatterns = [
 	url(r'^loadLog/', views.LoadLogRequest, name = 'Load Log'),
 	url(r'^getFeasibilityList/', views.getFeasibilityList, name = 'Feasibility List'),
 	url(r'^addConn/', views.add_connections, name = 'Add Connections'),
+	url(r'^graphv2/', views.graphv2, name = 'The Graph'),	
 ]

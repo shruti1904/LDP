@@ -23,6 +23,24 @@ class Transformer(models.Model):
 	def __str__(self):
 		return self.Name
 
+	def dict(self):
+		transformerDict = {}
+		transformerDict['id'] = self.id
+		transformerDict['label'] = self.Name
+		transformerDict['font'] =	{'color':'white'}
+
+		if( self.Status == True):
+			if( self.Load <= self.kVA):
+				transformerDict['color'] = '#047a00'
+			else:
+				transformerDict['color'] = '#e21d1d'		
+		else:
+			transformerDict['color'] = '#777'
+		return transformerDict
+	
+	def getId(self):
+		return self.id
+
 class Building(models.Model):
 	Name = models.CharField(max_length = 50)
 	Transformer = models.ForeignKey(Transformer, on_delete = models.CASCADE)
@@ -34,6 +52,14 @@ class Building(models.Model):
 	def __str__(self):
 		return self.Name
 
+	def dict(self):
+		buildingDict = {'id' : self.id + Transformer.objects.all().count(), 
+						'label' : self.Name, 
+						'shape': 'dot', 
+						'size': 10, 
+						'color' : '#29568F'};
+		return buildingDict
+
 class Connection(models.Model):
 	Transformer = models.ForeignKey(Transformer, on_delete = models.CASCADE)
 	Building = models.ForeignKey(Building, on_delete = models.CASCADE) 
@@ -43,6 +69,14 @@ class Connection(models.Model):
 	def __str__(self):
 		return str(self.Transformer) + " -> " + str(self.Building)
 
+	def dict(self):
+		return {
+			'from': self.Transformer.id,
+			'to': self.Building.id+ Transformer.objects.all().count(),
+			'color': {
+				'color':'black'
+			}
+		}
 
 class User(models.Model):
 	FullName = models.CharField(max_length=50)
