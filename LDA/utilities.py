@@ -12,7 +12,7 @@ def toggle(tID):
         oldT.Status = False
         oldT.Load = 0
         oldT.save()
-        LoadLog(Transformer = oldT, Load = oldT.Load, Time = timezone.now()).save()
+        # LoadLog(Transformer = oldT, Load = oldT.Load, Time = timezone.now()).save()
         for conn in oldT.connection_set.filter(Connected = True):
             # Disconnect the buildings which are connected to the transformer.
             conn.Connected = False
@@ -31,7 +31,7 @@ def toggle(tID):
                     switchTo.Load += b.ConnectedLoad
                     switchTo.save()
                     ChangedBuildings.append(b.id)
-                    LoadLog(Transformer = switchTo, Load = switchTo.Load, Time = timezone.now()).save()
+                    # LoadLog(Transformer = switchTo, Load = switchTo.Load, Time = timezone.now()).save()
     else:
         oldT.Status = True
         for b in oldT.building_set.all():
@@ -41,12 +41,12 @@ def toggle(tID):
                 c.Connected = False
                 c.Transformer.Load -= b.ConnectedLoad
                 c.Transformer.save()
-                LoadLog(Transformer = c.Transformer, Load = c.Transformer.Load, Time = timezone.now()).save()
+                # LoadLog(Transformer = c.Transformer, Load = c.Transformer.Load, Time = timezone.now()).save()
                 c.save()
             ChangedBuildings.append(b.id)
             Connection.objects.filter(Transformer = oldT, Building = b).update(Connected = True)
         oldT.save()
-        LoadLog(Transformer = oldT, Load = oldT.Load, Time = timezone.now()).save()
+        # LoadLog(Transformer = oldT, Load = oldT.Load, Time = timezone.now()).save()
 
     return ChangedBuildings
 
@@ -82,5 +82,5 @@ def add_connections():
             t.Load += b.ConnectedLoad
             t.Status = True
             t.save()
-            LoadLog(Transformer = t, Load = t.Load, Time = timezone.now()).save()
+            # LoadLog(Transformer = t, Load = t.Load, Time = timezone.now()).save()
 

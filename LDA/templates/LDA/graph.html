@@ -483,12 +483,10 @@
 		function toggleTransformer(){
 
 
-			document.getElementById("t_ID").value
-			= document.getElementById("toggleButton").getAttribute("T_ID");
-			if(document.getElementById("t_ID").value<0)
+			var id = document.getElementById("toggleButton").getAttribute("T_ID");
+			if(id<0)
 				return;
 
-			var id = document.getElementById("t_ID").value;
 			var toggleRequest = new XMLHttpRequest();
 			toggleRequest.onreadystatechange = function(){
 				if (this.readyState == 4 && this.status == 200)
