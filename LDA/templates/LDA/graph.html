@@ -7,11 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="{% static 'LDA/vis.js' %}"></script>
 	<link href="{% static 'LDA/vis.css' %}" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <style type="text/css">
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style type="text/css">
 
 		#mynetwork {
 			position: fixed;
@@ -105,6 +105,7 @@
 			cursor: pointer;
 			font-size: 50px;
 			padding: 10px;
+			border-radius: 10px;
 		}
 		.headin{
 			display: inline-block;
@@ -113,8 +114,13 @@
 			float: right;
 		}
 		.bottom{
+			width: 100%;
+			margin: 10px;
 			background:url("http://localhost/wordpress/wp-content/themes/nile/images/footer_section_bg.png");
-			color: white;
+			color: black;
+			position: absolute;
+			bottom: 0px;
+
 		}
 
 		#AddConnButton
@@ -126,6 +132,28 @@
     		bottom: 3em;
     		right: 3em;
     	}
+    	#helpBox{
+    		margin-left: 10px;
+    		display: inline-block;
+    		padding: 10px;
+    		position: fixed;
+    		left: 0px;
+    		bottom: 0px;
+    		color: black;
+    		text-align: center;
+    		border-top-right-radius:5px;
+    		border-top-left-radius:5px;
+    		cursor: pointer;
+    		background-color: white;
+    		box-shadow: 0px 0px 10px #0bb;
+    	}
+    	.helpContent{
+    		display: block;
+    	}
+    	.myRow{
+    		padding: 10px;
+    	}
+
   </style>
 </head>
 
@@ -138,28 +166,18 @@
 
 	<div id="mySidenav" class="sidenav">
 		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-
+		  <br><br>
 		  <div>
-			.
 			<p class="hint">Name:</p>
 			<p id="name"></p>
 		  </div>
-		  <div>
-			<p class="hint">Latitude:</p>
-			<p id="latitude">18.151612</p>
-		  </div>
-		  <div>
-			<p class="hint">Longitude:</p>
-			<p id="longitude">73.030201</p>
-		  </div>
-
+		  
 			<a href="#" onclick="aboutTransformer()" >About</a>
-				<a href="#" onclick="getConnectedBuildings()">Building wise Load Share</a>
-				<a href="#" onclick="getLoadLogData()">Load Log</a>
+			<a href="#" onclick="getConnectedBuildings()">Building wise Load Share</a>
+			<a href="#" onclick="getLoadLogData()">Load Log</a>
 
 			<a href="#" onclick="toggleTransformer()" id="toggleButton">
 			Toggle (On/Off)</a>
-
 
 			<a href="#" class="bottom" onclick="Logout()" id="Logout">
 			Logout</a>
@@ -170,11 +188,6 @@
 	<div id="main">
 			<div id="mynetwork"></div>
 	</div>
-	<form method="post" id="Toggle" action="{% url 'LDA:toggle' %}">
-		{% csrf_token %}
-		<input type="hidden" name="t_ID" id="t_ID">
-	</form>
-
 
 	<div class="modal fade" id="aboutModal" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -199,6 +212,81 @@
 	<a href="{% url 'LDA:Add Connections' %}">
 		<img id="AddConnButton" src="{% static 'LDA/+.png' %}">
 	</a>
+
+	<div id="helpBox" onclick="toggleHelp()">
+		Help
+		<div class="helpContent" id="helpContent">
+		<div class="myRow">
+		<div class="row">
+			<div class="col-sm-6">	
+				<img src="{% static 'LDA/building.jpg' %}" width="20px">
+			</div>
+			<div class="col-sm-6">	
+				Normal Building
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div class="row">
+			<div class="col-sm-6">	
+				<img src="{% static 'LDA/building_updated.jpg' %}" width="20px">
+			</div>
+			<div class="col-sm-6">
+				Rerouted Building
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div class="row">
+			<div class="col-sm-6">	
+				<img src="{% static 'LDA/edge.jpg' %}" width="50px">
+			</div>
+			<div class="col-sm-6">
+				Normal Edge
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div class="row">
+			<div class="col-sm-6">	
+				<img src="{% static 'LDA/edge_updated.jpg' %}" width="50px">
+			</div>
+			<div class="col-sm-6">
+				Rerouted Edge
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div class="row">
+			<div class="col-sm-6">	
+				<img src="{% static 'LDA/transformer.jpg' %}" width="50px">	
+			</div>
+			<div class="col-sm-6">
+				Transformer (ON)
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div  class="row">
+			<div class="col-sm-6">	<img src="{% static 'LDA/transformer_off.jpg' %}" width="50px">
+			</div>
+			<div class="col-sm-6">
+				Transformer (OFF)	
+			</div>
+		</div>
+		</div>
+		<div class="myRow">
+		<div class="row ">
+			<div class="col-sm-6">
+				<img src="{% static 'LDA/transformer_overloaded.jpg' %}" width="50px">
+			</div>
+			<div class="col-sm-6">
+							Transformer (Overloaded)
+			</div>	
+		</div>
+		</div>
+		</div>
+	</div>
 </body>
 
 <script>
@@ -343,12 +431,13 @@
 					edgesList = data["Connection"];
 
 					if(changedBuildings!=null){
-						for (var i = edgesList.length - 1; i >= 0; i--) {
-							for (var j = changedBuildings.length - 1; j >= 0; j--) {
+						for (var j = changedBuildings.length - 1; j >= 0; j--) {
+							for (var i = edgesList.length - 1; i >= 0; i--) {
 								if(edgesList[i]["to"] == changedBuildings[j]+TListLength){
 									edgesList[i]["color"]["color"]="red";
 								}
 							}
+							nodesList[changedBuildings[j]+TListLength-1]["color"] = "#D77A2E";
 						}
 					}
 					
@@ -412,7 +501,7 @@
 
 
 		function openNav1(){
-			document.getElementById("name").innerHTML = "Current User";
+			document.getElementById("name").innerHTML = "";
 			document.getElementById("mySidenav").style.width = "300px";
 			document.getElementById("toggleButton").setAttribute("T_ID",-5);
 		}
@@ -572,74 +661,83 @@
 				});
 		}
 
-	// piechart and line chart for transFormer
+		// piechart and line chart for transFormer
 
-	function drawGraph(LoadLogData,id,type) 
-	{
-		// Load the Visualization API and the piechart package.
-      	google.charts.load('current', {'packages':['corechart']});
-		// Set a callback to run when the Google Visualization API is loaded.
-		if(type == 0)
-    		google.charts.setOnLoadCallback(function(){drawLineChart(LoadLogData,id)});
-		else
-			google.charts.setOnLoadCallback(function(){drawPieChart(LoadLogData,id)});
-	}
+		function drawGraph(LoadLogData,id,type) 
+		{
+			// Load the Visualization API and the piechart package.
+	      	google.charts.load('current', {'packages':['corechart']});
+			// Set a callback to run when the Google Visualization API is loaded.
+			if(type == 0)
+	    		google.charts.setOnLoadCallback(function(){drawLineChart(LoadLogData,id)});
+			else
+				google.charts.setOnLoadCallback(function(){drawPieChart(LoadLogData,id)});
+		}
 
-	// Callback that creates and populates a data table,
-	// instantiates the Line chart, passes in the data and
-	// draws it.
-    function drawLineChart(LoadLogData,id) 
-    {
-		var data;
-		var chart;
-	  	// Create our data table.
-	    data = new google.visualization.DataTable();
-	    data.addColumn('date', 'Date');
-	    data.addColumn('number', 'Load');
+		// Callback that creates and populates a data table,
+		// instantiates the Line chart, passes in the data and
+		// draws it.
+	    function drawLineChart(LoadLogData,id) 
+	    {
+			var data;
+			var chart;
+		  	// Create our data table.
+		    data = new google.visualization.DataTable();
+		    data.addColumn('date', 'Date');
+		    data.addColumn('number', 'Load');
 
-					for(var i = 1;i< LoadLogData.length;i++)
-	   	data.addRow(LoadLogData[i]);
+						for(var i = 1;i< LoadLogData.length;i++)
+		   	data.addRow(LoadLogData[i]);
 
-	    // Set chart options
-	    var options = {'title':'Building\'s Load Share',
-	                       'width':600,
-	                       'height':600};
+		    // Set chart options
+		    var options = {'title':'Building\'s Load Share',
+		                       'width':600,
+		                       'height':600};
 
-	    // Instantiate and draw our chart, passing in some options.
-	    chart = new google.visualization.LineChart(document.getElementById(id));
-	    google.visualization.events.addListener(chart, 'select', selectHandler);
-	    chart.draw(data, options);
-	}
-	
-	function drawPieChart(LoadLogData,id) 
-	{
-		var data;
-	   	var chart;
-  		// Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'Name');
-        data.addColumn('number', 'Load');
+		    // Instantiate and draw our chart, passing in some options.
+		    chart = new google.visualization.LineChart(document.getElementById(id));
+		    google.visualization.events.addListener(chart, 'select', selectHandler);
+		    chart.draw(data, options);
+		}
+		
+		function drawPieChart(LoadLogData,id) 
+		{
+			var data;
+		   	var chart;
+	  		// Create our data table.
+	        data = new google.visualization.DataTable();
+	        data.addColumn('string', 'Name');
+	        data.addColumn('number', 'Load');
 
-				for(var i = 0;i< LoadLogData.length;i++)
-        	data.addRow(LoadLogData[i]);
+					for(var i = 0;i< LoadLogData.length;i++)
+	        	data.addRow(LoadLogData[i]);
 
-        // Set chart options
-        var options = {'title':'Change in Load of this transformer',
-                       'width':500,
-                       'height':500};
+	        // Set chart options
+	        var options = {'title':'Change in Load of this transformer',
+	                       'width':500,
+	                       'height':500};
 
-        // Instantiate and draw our chart, passing in some options.
-        chart = new google.visualization.PieChart(document.getElementById(id));
-        google.visualization.events.addListener(chart, 'select', selectHandler);
-        chart.draw(data, options);
-      }
+	        // Instantiate and draw our chart, passing in some options.
+	        chart = new google.visualization.PieChart(document.getElementById(id));
+	        google.visualization.events.addListener(chart, 'select', selectHandler);
+	        chart.draw(data, options);
+	      }
 
-      function selectHandler() {
-        var selectedItem = chart.getSelection()[0];
-        var value = data.getValue(selectedItem.row, 0);
-        alert('The user selected ' + value);
-      }
+	      function selectHandler() {
+	        var selectedItem = chart.getSelection()[0];
+	        var value = data.getValue(selectedItem.row, 0);
+	        alert('The user selected ' + value);
+	      }
+	    function toggleHelp(){
+	    	var helpContent = document.getElementById("helpContent");
+	    	if(helpContent.style.display == "none"){
+	    		helpContent.style.display = "block";
+	    	}
+	    	else{
+	    		helpContent.style.display = "none";
+	    	}
+	    }
 
-	</script>
+</script>
 
 </html>

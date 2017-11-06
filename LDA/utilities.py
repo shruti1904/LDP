@@ -23,14 +23,15 @@ def toggle(tID):
                 dist = Connection.objects.get(Transformer = newT, Building = b).Distance
                 feasibility = ((0.8 * newT.kVA) -  newT.Load - b.ConnectedLoad) / dist
                 feasibilities[newT.id] = feasibility
-            if max(feasibilities.values()) > 0:
-                newTransID = max(feasibilities, key = feasibilities.get)
-                switchTo = Transformer.objects.get(id = newTransID)
-                Connection.objects.filter(Transformer = switchTo, Building = b).update(Connected = True)
-                switchTo.Load += b.ConnectedLoad
-                switchTo.save()
-                ChangedBuildings.append(b.id)
-                LoadLog(Transformer = switchTo, Load = switchTo.Load, Time = timezone.now()).save()
+            if len(feasibilities) > 0:
+                if max(feasibilities.values()) > 0:
+                    newTransID = max(feasibilities, key = feasibilities.get)
+                    switchTo = Transformer.objects.get(id = newTransID)
+                    Connection.objects.filter(Transformer = switchTo, Building = b).update(Connected = True)
+                    switchTo.Load += b.ConnectedLoad
+                    switchTo.save()
+                    ChangedBuildings.append(b.id)
+                    LoadLog(Transformer = switchTo, Load = switchTo.Load, Time = timezone.now()).save()
     else:
         oldT.Status = True
         for b in oldT.building_set.all():
@@ -70,10 +71,16 @@ def add_connections():
     # Update Connected to True for the buildings and transformers which are actually connected
     for b in Building.objects.all():
         t = Transformer.objects.get(id = b.Transformer_id)
+        if Connection.objects.filter(Building = b, Connected = True).exists():
+            for c in Connection.objects.filter(Building = b, Connected = True):
+                c.Connected = False;
+
         if Connection.objects.filter(Transformer = t, Building = b, Connected = False).exists():
             c = Connection.objects.get(Transformer = t, Building = b, Connected = False)
             c.Connected = True
             c.save()
             t.Load += b.ConnectedLoad
+            t.Status = True
             t.save()
             LoadLog(Transformer = t, Load = t.Load, Time = timezone.now()).save()
+
