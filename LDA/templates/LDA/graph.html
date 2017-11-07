@@ -522,7 +522,7 @@
 
 	            	TransformerData = this.responseText;
 	            	TransformerData = JSON.parse(JSON.parse(TransformerData));
-								HtmlContent="<table class='table'><tr><td style='font-weight:bold'>id</td><td style='font-weight:bold'>value</td></tr>";
+								HtmlContent="<table class='table'>";
 
 								for(i in TransformerData[0].fields){
 									HtmlContent+="<tr><td>"+i+"</td><td>"+TransformerData[0].fields[i]+"</td></tr>";
@@ -557,7 +557,7 @@
 									}
 									console.log(timeLoadRow);
 									drawGraph(timeLoadRow,'chart_div',0);//0 because its a LineChart
-									$('#aboutTag').html("Transformer: "+nodesList[document.getElementById("toggleButton").getAttribute("T_ID")]);
+									$('#aboutTag').html("Transformer: "+nodesList[document.getElementById("toggleButton").getAttribute("T_ID")-1]["label"]);
 
 									$('#aboutContent').html("");
 									$('#aboutModal').modal('toggle');
@@ -578,7 +578,7 @@
 										data =JSON.parse(data);
 										console.log(data);
 										drawGraph(data,'chart_div',1);//1 because its a LineChart
-										$('#aboutTag').html("Transformer: "+nodesList[id]);
+										$('#aboutTag').html("Transformer: "+nodesList[document.getElementById("toggleButton").getAttribute("T_ID")-1]["label"]);
 										$("#aboutModal").modal("toggle");
 
 		        }
@@ -603,7 +603,7 @@
 								}
 
 								HtmlContent+="</table>"
-								$('#aboutTag').html("Building:"+nodesList[id+TListLength]);
+								$('#aboutTag').html("Building:"+nodesList[id+TListLength-1]["label"]);
 								$('#aboutContent').html(HtmlContent);
 								$("#aboutModal").modal("toggle");
            		}
@@ -690,7 +690,14 @@
 		    // Set chart options
 		    var options = {'title':'Building\'s Load Share',
 		                       'width':600,
-		                       'height':600};
+		                       'height':600,
+	                        hAxis: {
+    							title: 'Time'
+        					},
+					        vAxis: {
+					          title: 'Load'
+					        }
+		    };
 
 		    // Instantiate and draw our chart, passing in some options.
 		    chart = new google.visualization.LineChart(document.getElementById(id));
